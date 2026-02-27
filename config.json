@@ -1,0 +1,25 @@
+{
+  "rounds_per_run": 4,
+  "model_rotation": [
+    {
+      "name": "Gemini-Sovereign",
+      "provider": "gemini",
+      "model": "gemini-1.5-pro"
+    },
+    {
+      "name": "Claude-Coding-Elder",
+      "provider": "openrouter",
+      "model": "anthropic/claude-3-opus"
+    },
+    {
+      "name": "DeepSeek-Logic-Elder",
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-chat"
+    },
+    {
+      "name": "GPT-Engineering-Elder",
+      "provider": "openrouter",
+      "model": "openai/gpt-4o"
+    }
+  ]
+}
