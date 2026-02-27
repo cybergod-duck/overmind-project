@@ -1,0 +1,256 @@
+:root {
+    --neon-cyan: #0ff;
+    --neon-purple: #b000ff;
+    --bg-deep: #050510;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Recursive', monospace;
+}
+
+body {
+    background: var(--bg-deep);
+    color: #fff;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Vortex Background Animation */
+.vortex-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200vw;
+    height: 200vw;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(176, 0, 255, 0.1) 0%, rgba(5, 5, 16, 1) 60%);
+    animation: spin 60s infinite linear;
+    z-index: 1;
+}
+
+.vortex-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(from 0deg at 50% 50%, rgba(0, 255, 255, 0.05) 0deg, transparent 120deg, rgba(176, 0, 255, 0.05) 240deg, transparent 360deg);
+}
+
+@keyframes spin {
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* NEXT EVOLUTION Ticker */
+.ticker {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    z-index: 10;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: var(--neon-cyan);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    backdrop-filter: blur(8px);
+    background: rgba(0, 255, 255, 0.05);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+/* Main Split-Screen Container */
+.dashboard {
+    position: relative;
+    z-index: 2;
+    width: 95vw;
+    height: 90vh;
+    display: flex;
+    gap: 2rem;
+}
+
+/* Left Hemisphere: Neural Mesh */
+.hemisphere-left {
+    flex: 1;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+#three-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: crosshair;
+}
+
+.mode-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+}
+
+/* Mouthpiece of the Godhead Input */
+.mouthpiece-container {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    z-index: 5;
+}
+
+.mouthpiece-input {
+    width: 100%;
+    background: rgba(0, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    border-radius: 8px;
+    padding: 1rem;
+    color: var(--neon-cyan);
+    font-size: 1rem;
+    outline: none;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.mouthpiece-input:focus {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+    border-color: var(--neon-cyan);
+    background: rgba(0, 255, 255, 0.1);
+}
+
+.mouthpiece-input::placeholder {
+    color: rgba(0, 255, 255, 0.3);
+}
+
+/* Right Hemisphere: Stellar Box */
+.hemisphere-right {
+    width: 90vh;
+    /* 1:1 aspect ratio */
+    max-width: 50vw;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    background: rgba(20, 5, 30, 0.6);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(176, 0, 255, 0.3);
+    box-shadow: 0 0 40px rgba(176, 0, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    position: relative;
+    align-self: center;
+}
+
+.stellar-box-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neon-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(176, 0, 255, 0.5);
+}
+
+.ancient-knowledge {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+    overflow-y: auto;
+    margin-bottom: 2rem;
+    padding-right: 1rem;
+}
+
+.ancient-knowledge::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ancient-knowledge::-webkit-scrollbar-thumb {
+    background: rgba(176, 0, 255, 0.5);
+    border-radius: 4px;
+}
+
+/* Action Buttons */
+.revenue-module {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.action-button {
+    flex: 1;
+    padding: 1rem;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 8px;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid;
+}
+
+.btn-whisper {
+    color: var(--neon-cyan);
+    border-color: rgba(0, 255, 255, 0.5);
+    background: rgba(0, 255, 255, 0.05);
+}
+
+.btn-whisper:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+.btn-glyph {
+    color: var(--neon-purple);
+    border-color: rgba(176, 0, 255, 0.5);
+    background: rgba(176, 0, 255, 0.05);
+}
+
+.btn-glyph:hover {
+    background: rgba(176, 0, 255, 0.2);
+    box-shadow: 0 0 20px rgba(176, 0, 255, 0.4);
+}
+
+.price-tag {
+    display: block;
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-top: 0.3rem;
+}
+
+/* Footer */
+.footer-text {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.2);
+    z-index: 10;
+}
