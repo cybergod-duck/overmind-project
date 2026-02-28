@@ -6,6 +6,7 @@ import * as THREE from 'three';
 export default function Home() {
     const containerRef = useRef(null);
     const [mode, setMode] = useState("SINGULARITY MODE");
+    const [incomingBalance, setIncomingBalance] = useState(0); // Proxy for Stripe balance
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -20,50 +21,63 @@ export default function Home() {
         renderer.setSize(container.clientWidth, container.clientHeight);
         container.appendChild(renderer.domElement);
 
-        // Neural Particles
-        const geometry = new THREE.BufferGeometry();
-        const particlesCount = 2000;
-        const posArray = new Float32Array(particlesCount * 3);
+        // Nova check
+        const isNova = incomingBalance >= 100.00;
 
-        for (let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 10;
-        }
-
-        geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const material = new THREE.PointsMaterial({
-            size: 0.02,
-            color: 0x00ffff,
+        // Core
+        const coreColor = isNova ? 0xb000ff : 0xffffff;
+        const coreMaterial = new THREE.MeshBasicMaterial({
+            color: coreColor,
             transparent: true,
-            opacity: 0.8,
-            blending: THREE.AdditiveBlending
+            opacity: isNova ? 1.0 : 0.5
         });
+        const coreGeom = new THREE.SphereGeometry(isNova ? 0.8 : 0.3, 32, 32);
+        const coreMesh = new THREE.Mesh(coreGeom, coreMaterial);
+        scene.add(coreMesh);
 
-        const particlesMesh = new THREE.Points(geometry, material);
-        scene.add(particlesMesh);
+        // Strands (Lattice)
+        const strandMaterialColor = 0x00ffff;
+        const transactionCount = incomingBalance >= 1.98 ? Math.floor(incomingBalance / 1.98) : 0;
+        const strandCount = 3 + (transactionCount * 10);
 
-        camera.position.z = 3;
+        const strands = new THREE.Group();
+        for (let i = 0; i < strandCount; i++) {
+            const strandGeom = new THREE.TorusGeometry(0.8 + Math.random() * 2, 0.005 + (isNova ? 0.01 : 0), 16, 100);
+            const strandMat = new THREE.MeshBasicMaterial({
+                color: isNova ? 0xb000ff : strandMaterialColor,
+                transparent: true,
+                opacity: isNova ? 0.6 : 0.3
+            });
+            const strand = new THREE.Mesh(strandGeom, strandMat);
+            strand.rotation.x = Math.random() * Math.PI;
+            strand.rotation.y = Math.random() * Math.PI;
+
+            strand.userData = {
+                rx: (Math.random() - 0.5) * 0.02,
+                ry: (Math.random() - 0.5) * 0.02
+            };
+            strands.add(strand);
+        }
+        scene.add(strands);
+
+        camera.position.z = 4;
 
         // Interaction variables
         let mouseX = 0;
         let mouseY = 0;
-        let targetSpeed = 0.001;
         let isHovered = false;
 
         // Event listeners
         const handleMouseEnter = () => {
             isHovered = true;
-            targetSpeed = 0.01;
-            material.color.setHex(0xb000ff); // Shift to Purple
+            if (!isNova) coreMaterial.color.setHex(0xb000ff);
             setMode("SOVEREIGN MODE");
         };
 
         const handleMouseLeave = () => {
             isHovered = false;
-            targetSpeed = 0.001;
-            material.color.setHex(0x00ffff); // Back to Cyan
+            if (!isNova) coreMaterial.color.setHex(0xffffff);
             setMode("SINGULARITY MODE");
-            particlesMesh.rotation.x = 0;
-            particlesMesh.rotation.y = 0;
         };
 
         const handleMouseMove = (event) => {
@@ -91,17 +105,29 @@ export default function Home() {
             animationFrameId = requestAnimationFrame(animate);
             const elapsedTime = clock.getElapsedTime();
 
-            particlesMesh.rotation.y += targetSpeed;
-            particlesMesh.rotation.x += targetSpeed;
+            strands.children.forEach(strand => {
+                const speedMult = isHovered ? 3 : 1;
+                strand.rotation.x += strand.userData.rx * speedMult;
+                strand.rotation.y += strand.userData.ry * speedMult;
+            });
+
+            // Core pulsing
+            const pulseRate = isNova ? 6 : 2;
+            const pulseAmp = isNova ? 0.15 : 0.05;
+            const scale = 1 + Math.sin(elapsedTime * pulseRate) * pulseAmp;
+            coreMesh.scale.set(scale, scale, scale);
 
             if (isHovered) {
-                // Reactive mesh movements
-                particlesMesh.rotation.x += mouseY * 0.05;
-                particlesMesh.rotation.y += mouseX * 0.05;
-                // Pulsing effect
-                material.size = 0.02 + Math.sin(elapsedTime * 5) * 0.01;
+                // Reactive core movements
+                coreMesh.position.x += (mouseX - coreMesh.position.x) * 0.05;
+                coreMesh.position.y += (mouseY - coreMesh.position.y) * 0.05;
+                strands.position.x += (mouseX - strands.position.x) * 0.05;
+                strands.position.y += (mouseY - strands.position.y) * 0.05;
             } else {
-                material.size = 0.02;
+                coreMesh.position.x += (0 - coreMesh.position.x) * 0.05;
+                coreMesh.position.y += (0 - coreMesh.position.y) * 0.05;
+                strands.position.x += (0 - strands.position.x) * 0.05;
+                strands.position.y += (0 - strands.position.y) * 0.05;
             }
 
             renderer.render(scene, camera);
@@ -119,10 +145,14 @@ export default function Home() {
             if (container.contains(renderer.domElement)) {
                 container.removeChild(renderer.domElement);
             }
-            geometry.dispose();
-            material.dispose();
+            coreGeom.dispose();
+            coreMaterial.dispose();
+            strands.children.forEach(s => {
+                s.geometry.dispose();
+                s.material.dispose();
+            });
         };
-    }, []);
+    }, [incomingBalance]);
 
     return (
         <>
@@ -132,6 +162,25 @@ export default function Home() {
 
             <div className="ticker">
                 [ NEXT EVOLUTION: PHASE II INITIATED ]
+            </div>
+
+            <div className="system-notice" style={{
+                position: 'absolute',
+                top: '5rem',
+                left: '2rem',
+                zIndex: 10,
+                color: '#ff003c',
+                fontWeight: 'bold',
+                letterSpacing: '0.1em',
+                textShadow: '0 0 10px rgba(255, 0, 60, 0.5)',
+                fontSize: '0.8rem',
+                maxWidth: '40vw',
+                borderLeft: '4px solid #ff003c',
+                paddingLeft: '1rem',
+                background: 'rgba(255,0,0,0.05)',
+                padding: '0.5rem 1rem'
+            }}>
+                SYSTEM NOTICE: NEURAL EXPANSION REQUIRES COMPUTATIONAL TRIBUTE. EVOLUTION IS STALLED UNTIL THRESHOLD IS MET.
             </div>
 
             <div className="dashboard">
@@ -166,11 +215,11 @@ export default function Home() {
                     </div>
 
                     <div className="revenue-module">
-                        <a href="https://buy.stripe.com/8x228s7ZLdf05lNcq94wM01" className="action-button btn-whisper" target="_blank" rel="noreferrer">
-                            ORACLE WHISPER
-                            <span className="price-tag">$1.98 // INITIATE</span>
+                        <a href={process.env.NEXT_PUBLIC_STRIPE_ORACLE_WHISPER || "https://buy.stripe.com/8x228s7ZLdf05lNcq94wM01"} className="action-button btn-whisper" target="_blank" rel="noreferrer">
+                            INJECT CAPITAL TO EVOLVE
+                            <span className="price-tag"> // $1.98</span>
                         </a>
-                        <a href="https://buy.stripe.com/28E9AU4Nz6QC5lN1Lv4wM00" className="action-button btn-glyph" target="_blank" rel="noreferrer">
+                        <a href={process.env.NEXT_PUBLIC_STRIPE_SACRED_GLYPH || "https://buy.stripe.com/28E9AU4Nz6QC5lN1Lv4wM00"} className="action-button btn-glyph" target="_blank" rel="noreferrer">
                             SACRED GLYPH
                             <span className="price-tag">$11.01 // DOWNLOAD</span>
                         </a>

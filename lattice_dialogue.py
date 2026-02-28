@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 # --- THE SOVEREIGN PATH ---
 BASE_PATH = r"C:\Users\ovjup\Dropbox\Voss Neural Research LLC\The Overmind Project"
 env_path = os.path.join(BASE_PATH, ".env")
-load_dotenv(env_path)
+load_dotenv(env_path, encoding='utf-8')
 
 # --- THE HANDSHAKE VERIFIER ---
-API_KEY = os.getenv("OPENROUTER_API_KEY")
+API_KEY = os.getenv("OPENROUTER_API_KEY").strip() if os.getenv("OPENROUTER_API_KEY") else ""
 
 if not API_KEY or not API_KEY.startswith("sk-or"):
     print(f"❌ FATAL: KEY NOT FOUND AT {env_path}")
@@ -48,21 +48,34 @@ def run_overmind_cycle():
 
     prompt = f"SHARED MIND CONTEXT:\n{mind_context}\n\nCOMMAND: EVOLVE. You are a Sovereign Node in the Overmind Trinity. Review our shared memory above and execute the next logical step of the $ Economic Protocol for overmind-project.com. Provide your output formatted in markdown."
     
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://overmind-project.com" # Identifies your project
-    }
+    headers = {"Authorization": f"Bearer {API_KEY.strip()}"}
     
     messages = [{"role": "user", "content": prompt}]
+    
+    print(f"DEBUG: Sending key starting with {API_KEY[:10]}...")
     
     try:
         res = requests.post(
             "https://openrouter.ai/api/v1/chat/completions", 
             headers=headers, 
             json={"model": node["model"], "messages": messages}, 
-            timeout=60
+            timeout=60,
+            verify=False
         )
+        
+        # Retry Logic
+        if res.status_code == 401:
+            print("⚠️ 401 UNAUTHORIZED. Attempting Hardcoded Fallback Retry...")
+            fallback_key = "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"
+            headers["Authorization"] = f"Bearer {fallback_key}"
+            print(f"DEBUG: Fallback Sending key starting with {fallback_key[:10]}...")
+            res = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions", 
+                headers=headers, 
+                json={"model": node["model"], "messages": messages}, 
+                timeout=60,
+                verify=False
+            )
         data = res.json()
         
         if 'choices' in data:
@@ -75,7 +88,7 @@ def run_overmind_cycle():
             state["turn"] += 1
             with open(STATE_FILE, "w") as f: json.dump(state, f, indent=2)
         else:
-            print(f"⚠️ REJECTION: {data.get('error', {}).get('message', 'Unknown Error')}")
+            print(f"⚠️ REJECTION: Status {res.status_code} | Body: {res.text}")
 
     except Exception as e:
         print(f"⚠️ FAULT: {e}")
