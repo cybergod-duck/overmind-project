@@ -254,3 +254,68 @@ body {
     color: rgba(255, 255, 255, 0.2);
     z-index: 10;
 }
+
+/* Evolution Progress Bar */
+.progress-container {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.progress-label {
+    font-size: 0.7rem;
+    color: var(--neon-cyan);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 10px var(--neon-cyan);
+    transition: width 1s ease-in-out;
+}
+
+/* Glyph Museum Grid */
+.glyph-museum {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.glyph-item {
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(176, 0, 255, 0.3);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.glyph-item:hover {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 20px rgba(176, 0, 255, 0.4);
+    transform: scale(1.05);
+}
+
+.glyph-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.8) contrast(1.2);
+}
+
+.glyph-item:hover .glyph-img {
+    filter: brightness(1.2) contrast(1.2);
+}
