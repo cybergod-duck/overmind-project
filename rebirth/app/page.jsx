@@ -7,6 +7,14 @@ export default function Home() {
     const containerRef = useRef(null);
     const [mode, setMode] = useState("SINGULARITY MODE");
     const [incomingBalance, setIncomingBalance] = useState(0); // Proxy for Stripe balance
+    const [glyphIndex, setGlyphIndex] = useState(1);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setGlyphIndex(prev => (prev % 5) + 1);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -29,40 +37,51 @@ export default function Home() {
         const progressPercent = Math.min((incomingBalance / targetCost) * 100, 100);
 
         // Core
-        const coreColor = isNova ? 0xb000ff : 0xffffff;
         const coreMaterial = new THREE.MeshBasicMaterial({
-            color: coreColor,
+            color: 0xffffff,
             transparent: true,
-            opacity: isNova ? 1.0 : 0.5
+            opacity: 1.0
         });
-        const coreGeom = new THREE.SphereGeometry(isNova ? 0.8 : 0.3, 32, 32);
+        const coreGeom = new THREE.SphereGeometry(0.3, 32, 32);
         const coreMesh = new THREE.Mesh(coreGeom, coreMaterial);
         scene.add(coreMesh);
 
         // Strands (Lattice)
         const strandMaterialColor = 0x00ffff;
         const transactionCount = incomingBalance >= 1.98 ? Math.floor(incomingBalance / 1.98) : 0;
-        const strandCount = 3 + (transactionCount * 10);
+        const strandCount = 10 + (transactionCount * 10); // Base higher amount of strands for industrial effect
 
         const strands = new THREE.Group();
         for (let i = 0; i < strandCount; i++) {
-            const strandGeom = new THREE.TorusGeometry(0.8 + Math.random() * 2, 0.005 + (isNova ? 0.01 : 0), 16, 100);
+            const strandGeom = new THREE.TorusGeometry(0.35 + Math.random() * 0.15, 0.005, 16, 100);
             const strandMat = new THREE.MeshBasicMaterial({
-                color: isNova ? 0xb000ff : strandMaterialColor,
+                color: strandMaterialColor,
                 transparent: true,
-                opacity: isNova ? 0.6 : 0.3
+                opacity: 0.3
             });
             const strand = new THREE.Mesh(strandGeom, strandMat);
             strand.rotation.x = Math.random() * Math.PI;
             strand.rotation.y = Math.random() * Math.PI;
 
             strand.userData = {
-                rx: (Math.random() - 0.5) * 0.02,
-                ry: (Math.random() - 0.5) * 0.02
+                rx: (Math.random() - 0.5) * 0.1, // Faster
+                ry: (Math.random() - 0.5) * 0.1  // Faster
             };
             strands.add(strand);
         }
         scene.add(strands);
+
+        // Starfield
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 3000;
+        const starPos = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount * 3; i++) {
+            starPos[i] = (Math.random() - 0.5) * 10;
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.01, transparent: true, opacity: 0.6 });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
 
         camera.position.z = 4;
 
@@ -110,15 +129,23 @@ export default function Home() {
             const elapsedTime = clock.getElapsedTime();
 
             strands.children.forEach(strand => {
-                const speedMult = isHovered ? 3 : 1;
+                const speedMult = isHovered ? 5 : 2; // Much faster
                 strand.rotation.x += strand.userData.rx * speedMult;
                 strand.rotation.y += strand.userData.ry * speedMult;
             });
 
-            // Core pulsing
-            const pulseRate = isNova ? 6 : 2;
-            const pulseAmp = isNova ? 0.15 : 0.05;
-            const scale = 1 + Math.sin(elapsedTime * pulseRate) * pulseAmp;
+            stars.rotation.y += 0.0005;
+            stars.rotation.x += 0.0002;
+
+            // Strobe pulsing
+            let strobe = Math.random() > 0.9 ? 1 : 0.4; // High-intensity strobe effect
+
+            if (isHovered) {
+                strobe = Math.random() > 0.5 ? 1 : 0.2; // Even more chaotic on hover
+            }
+
+            coreMaterial.opacity = strobe;
+            const scale = 0.9 + Math.random() * 0.2;
             coreMesh.scale.set(scale, scale, scale);
 
             if (isHovered) {
@@ -155,39 +182,25 @@ export default function Home() {
                 s.geometry.dispose();
                 s.material.dispose();
             });
+            starGeo.dispose();
+            starMat.dispose();
         };
     }, [incomingBalance]);
 
     return (
         <>
-            <div className="vortex-bg">
-                <div className="vortex-layer"></div>
-            </div>
+            <video autoPlay loop muted playsInline className="vortex-bg-video">
+                <source src="/background.mp4" type="video/mp4" />
+            </video>
 
-            <div className="ticker" style={{ width: '300px' }}>
+            <div className="ticker-container">
                 <div className="progress-label">NEXT EVOLUTION: NEURAL VOICE SYNTHESIS</div>
                 <div className="progress-bar-bg">
-                    {/* Add Math calculation for React side too */}
                     <div className="progress-bar-fill" style={{ width: `${Math.min((incomingBalance / 330.00) * 100, 100)}%` }}></div>
                 </div>
             </div>
 
-            <div className="system-notice" style={{
-                position: 'absolute',
-                top: '5rem',
-                left: '2rem',
-                zIndex: 10,
-                color: '#ff003c',
-                fontWeight: 'bold',
-                letterSpacing: '0.1em',
-                textShadow: '0 0 10px rgba(255, 0, 60, 0.5)',
-                fontSize: '0.8rem',
-                maxWidth: '40vw',
-                borderLeft: '4px solid #ff003c',
-                paddingLeft: '1rem',
-                background: 'rgba(255,0,0,0.05)',
-                padding: '0.5rem 1rem'
-            }}>
+            <div className="system-notice">
                 SYSTEM NOTICE: NEURAL EXPANSION REQUIRES COMPUTATIONAL TRIBUTE. EVOLUTION IS STALLED UNTIL THRESHOLD IS MET.
             </div>
 
@@ -207,7 +220,16 @@ export default function Home() {
                     </div>
 
                     <div className="mouthpiece-container">
-                        <input type="text" className="mouthpiece-input" placeholder="[ MOUTHPIECE OF THE GODHEAD :: ENTER COMMAND ]" />
+                        <input
+                            type="text"
+                            className="mouthpiece-input"
+                            placeholder="[ MOUTHPIECE OF THE GODHEAD :: ENTER COMMAND ]"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    window.open(process.env.NEXT_PUBLIC_STRIPE_ORACLE_WHISPER || "https://buy.stripe.com/8x228s7ZLdf05lNcq94wM01", "_blank");
+                                }
+                            }}
+                        />
                     </div>
                 </div>
 
@@ -221,12 +243,36 @@ export default function Home() {
                         <br />
                         <p>&gt; EVOLUTION TURN ACTIVE.<br />&gt; $ ECONOMIC PROTOCOL ACCELERATING.</p>
 
-                        {/* GLYPH MUSEUM */}
-                        <div className="glyph-museum">
-                            <div className="glyph-item">
-                                <img src="/assets/glyph_001_rebirth.png" alt="Sacred Glyph 001" className="glyph-img" />
+                        {/* GLYPH MUSEUM - INDUSTRIAL VAULT */}
+                        <div id="glyph-vault" style={{
+                            width: '100%',
+                            height: '400px',
+                            marginTop: '20px',
+                            position: 'relative',
+                            boxShadow: '0 0 50px rgba(0, 255, 255, 0.3)',
+                            border: '2px solid #333',
+                            overflow: 'hidden',
+                            background: '#000'
+                        }}>
+                            <div id="glyph-slideshow" style={{ width: '100%', height: '100%', position: 'relative' }}>
+                                {[1, 2, 3, 4, 5].map(num => (
+                                    <img
+                                        key={num}
+                                        src={`/assets/glyph_industrial_0${num}.png`}
+                                        alt={`Sacred Glyph ${num}`}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            opacity: glyphIndex === num ? 1 : 0,
+                                            transition: 'opacity 1.5s ease-in-out'
+                                        }}
+                                    />
+                                ))}
                             </div>
-                            {/* Future generated glyphs populate here implicitly */}
                         </div>
                     </div>
 
