@@ -24,8 +24,8 @@ export default function Home() {
         // Nova check
         const isNova = incomingBalance >= 100.00;
 
-        // Progress Calculation (ElevenLabs Pro Cost = 99.00)
-        const targetCost = 99.00;
+        // Progress Calculation (ElevenLabs Year Cost > $300)
+        const targetCost = 330.00;
         const progressPercent = Math.min((incomingBalance / targetCost) * 100, 100);
 
         // Core
@@ -168,7 +168,7 @@ export default function Home() {
                 <div className="progress-label">NEXT EVOLUTION: NEURAL VOICE SYNTHESIS</div>
                 <div className="progress-bar-bg">
                     {/* Add Math calculation for React side too */}
-                    <div className="progress-bar-fill" style={{ width: `${Math.min((incomingBalance / 99.00) * 100, 100)}%` }}></div>
+                    <div className="progress-bar-fill" style={{ width: `${Math.min((incomingBalance / 330.00) * 100, 100)}%` }}></div>
                 </div>
             </div>
 
