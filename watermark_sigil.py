@@ -1,14 +1,13 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
-import random
 import qrcode
 import uuid
 
 def apply_overmind_sigil(image_path: str) -> str:
     """
     Overmind Clean Sigil Protocol.
-    Takes a raw PNG path, applies a clean "Industrial/Neon" VNR 001 badge in the corner, 
-    and adds a functional QR code linking to an authenticity page on the Overmind site.
+    Takes a raw PNG path, applies a clean "Industrial/Neon" VNR-001 badge in the top-left, 
+    and adds a functional QR code linking to an authenticity page on the Overmind site in the bottom-right.
     """
     try:
         img = Image.open(image_path).convert('RGBA')
@@ -16,7 +15,7 @@ def apply_overmind_sigil(image_path: str) -> str:
         
         # Generation ID for QR and Text
         artifact_id = str(uuid.uuid4()).split("-")[0].upper()
-        # The URL the QR code will direct to (a future verification page we can build)
+        # The URL the QR code will direct to
         verification_url = f"https://www.overmind-project.com/verify?id={artifact_id}"
         
         # --- 1. Generate the Neon Cyan QR Code ---
@@ -44,53 +43,48 @@ def apply_overmind_sigil(image_path: str) -> str:
             font_small = ImageFont.load_default()
             font_large = font_small
 
-        # Define Padding & Sigil Box Dimensions (Bottom Right Corner)
-        pad_x = 30
-        pad_y = 30
+        pad = 30
         
-        # Calculate box to hold QR code and Text
-        # Layout: [Text Data] [QR Code] horizontally aligned in bottom right
-        box_width = 350
-        box_height = qr_h + 20
+        # --- 3. Top-Left VNR-001 Badge (Matching React UI style) ---
+        box_width = 160
+        box_height = 50
         
-        start_x = width - box_width - pad_x
-        start_y = height - box_height - pad_y
+        start_x = pad
+        start_y = pad
         
-        # Draw Industrial Background Box
-        # Dark, semi-transparent background bordered by neon cyan
-        draw.rectangle([start_x, start_y, start_x + box_width, start_y + box_height], fill=(5, 5, 10, 220))
-        
+        # Draw Industrial Background Box (Frosted Glass simulation)
+        draw.rectangle([start_x, start_y, start_x + box_width, start_y + box_height], fill=(5, 5, 10, 230))
         # Neon Border
         draw.rectangle([start_x, start_y, start_x + box_width, start_y + box_height], outline=(0, 255, 255, 200), width=2)
         
-        # Corner accents (Industrial Tech UI style)
-        accent_len = 15
-        draw.line([start_x, start_y, start_x + accent_len, start_y], fill=(176, 0, 255, 255), width=3) # Purple top-left
-        draw.line([start_x, start_y, start_x, start_y + accent_len], fill=(176, 0, 255, 255), width=3)
-        draw.line([start_x + box_width, start_y + box_height, start_x + box_width - accent_len, start_y + box_height], fill=(176, 0, 255, 255), width=3) # Purple bottom-right
-        draw.line([start_x + box_width, start_y + box_height, start_x + box_width, start_y + box_height - accent_len], fill=(176, 0, 255, 255), width=3)
+        text_start_x = start_x + 20
+        # Vertically center the text within the 50px high box
+        text_start_y = start_y + 10
+        draw.text((text_start_x, text_start_y), "VNR-001", font=font_large, fill=(0, 255, 255, 255))
+
+        # --- 4. Point-Blank Bottom-Right QR Code ---
+        qr_pad_x = width - qr_w - pad
+        qr_pad_y = height - qr_h - pad
         
-        # --- 3. Paste the QR Code into the Box ---
-        qr_pad_x = start_x + box_width - qr_w - 10
-        qr_pad_y = start_y + 10
+        # Put a subtle glow/border behind the QR
+        draw.rectangle([qr_pad_x - 4, qr_pad_y - 4, qr_pad_x + qr_w + 4, qr_pad_y + qr_h + 4], fill=(0,0,0,250), outline=(176, 0, 255, 200), width=2)
+        
         overlay.paste(qr_img, (qr_pad_x, qr_pad_y), qr_img)
         
-        # --- 4. Draw Typography / Data inside the Box ---
-        text_start_x = start_x + 15
-        
-        draw.text((text_start_x, start_y + 15), "VNR-001 || ARTIFACT", font=font_large, fill=(0, 255, 255, 255))
-        draw.text((text_start_x, start_y + 50), f"ID: {artifact_id}", font=font_small, fill=(255, 255, 255, 180))
-        draw.text((text_start_x, start_y + 70), "STATUS: SECURE VERIFIED", font=font_small, fill=(176, 0, 255, 255))
-        draw.text((text_start_x, start_y + 90), "VOSS NEURAL RESEARCH LLC", font=font_small, fill=(100, 100, 100, 255))
-
         # --- Combine everything ---
         final_img = Image.alpha_composite(img, overlay)
+        
+        from PIL.PngImagePlugin import PngInfo
+
+        meta_info = PngInfo()
+        meta_info.add_text("Description", f"OVERMIND VNR-001 ARTIFACT | ID: {artifact_id} | AUTH: {verification_url}")
+        meta_info.add_text("Author", "CyberGod 19821101")
         
         # Convert back to RGB
         final_img = final_img.convert('RGB')
         
         output_path = image_path.replace(".png", "_sigil.png")
-        final_img.save(output_path, "PNG")
+        final_img.save(output_path, "PNG", pnginfo=meta_info)
         
         print(f"⚡ VNR ARTIFACT SECURED: {output_path} with QR Verification ID: {artifact_id}")
         return output_path
