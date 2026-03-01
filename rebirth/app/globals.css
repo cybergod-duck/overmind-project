@@ -3,14 +3,14 @@
 :root {
     --neon-cyan: #0ff;
     --neon-purple: #b000ff;
-    --bg-deep: #050510;
+    --bg-deep: #020208;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Recursive', 'IBM Plex Mono', 'Courier New', monospace;
+    font-family: 'Recursive', 'IBM Plex Mono', monospace;
 }
 
 body {
@@ -19,602 +19,242 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Video Background */
 .vortex-bg-video {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     min-width: 100vw;
     min-height: 100vh;
-    width: auto;
-    height: auto;
     transform: translate(-50%, -50%);
-    z-index: 0;
+    z-index: -1;
     object-fit: cover;
-    opacity: 0.65;
-    will-change: transform;
+    opacity: 0.35;
 }
 
-/* HUD System Notice */
-
-/* Progress bar — single consolidated definition */
-.progress-label {
-    font-size: 0.65rem;
-    color: var(--neon-cyan);
-    letter-spacing: 0.25em;
-    margin-right: 1rem;
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
-}
-
-.progress-bar-bg {
-    width: 250px;
-    height: 4px;
-    background: rgba(0, 255, 255, 0.1);
-    border-radius: 2px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid rgba(0, 255, 255, 0.2);
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background: var(--neon-cyan);
-    box-shadow: 0 0 10px var(--neon-cyan);
-    transition: width 1s ease-in-out;
-}
-
-.system-notice {
-    color: #ff0055;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    border: 1px solid rgba(255, 0, 85, 0.5);
-    border-radius: 2px;
-    padding: 0.6rem 0.8rem;
-    backdrop-filter: blur(12px);
-    background: rgba(255, 0, 85, 0.04);
-    box-shadow: 0 0 10px rgba(255, 0, 85, 0.1), inset 0 0 10px rgba(255, 0, 85, 0.05);
-    font-weight: 600;
-    text-transform: uppercase;
-    width: 280px;
-    line-height: 1.5;
-}
-
-/* Main Split-Screen Container */
-.dashboard {
-    position: absolute;
-    top: 3.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    width: 95vw;
-    height: calc(100vh - 6rem);
-    display: flex;
-    align-items: stretch;
-    gap: 2rem;
-}
-
-/* Left Hemisphere: Neural Mesh */
-.hemisphere-left {
-    flex: 1;
-    box-sizing: border-box;
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    background: rgba(5, 5, 16, 0.82);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(0, 255, 255, 0.25);
-    box-shadow:
-        0 0 30px rgba(0, 255, 255, 0.12),
-        0 0 60px rgba(0, 255, 255, 0.06),
-        inset 0 0 20px rgba(0, 255, 255, 0.04);
-    display: flex;
-    flex-direction: column;
-}
-
-#three-canvas {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    cursor: crosshair;
-}
-
-.mode-overlay {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.5);
-    letter-spacing: 0.1em;
-    pointer-events: none;
-}
-
-/* Mouthpiece of the Godhead Input */
-.mouthpiece-container {
-    position: relative;
-    z-index: 5;
-    flex-shrink: 0;
-}
-
-.mouthpiece-input {
-    width: 100%;
-    box-sizing: border-box;
-    background: rgba(0, 255, 255, 0.05);
-    border: 1px solid rgba(0, 255, 255, 0.4);
-    border-radius: 8px;
-    padding: 0.5rem 0.75rem;
-    color: var(--neon-cyan);
-    font-size: 0.85rem;
-    outline: none;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
-    transition: all 0.3s ease;
-}
-
-
-.mouthpiece-input:focus {
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
-    border-color: var(--neon-cyan);
-    background: rgba(0, 255, 255, 0.1);
-}
-
-.mouthpiece-input::placeholder {
-    color: rgba(0, 255, 255, 0.3);
-}
-
-/* Right Hemisphere: Stellar Box */
-.hemisphere-right {
-    flex: 0 0 25%;
-    min-width: 300px;
-    box-sizing: border-box;
-    border-radius: 12px;
-    background: rgba(5, 5, 16, 0.82);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 0, 255, 0.45);
-    box-shadow:
-        0 0 25px rgba(255, 0, 255, 0.2),
-        0 0 60px rgba(255, 0, 255, 0.1),
-        0 0 100px rgba(176, 0, 255, 0.06),
-        inset 0 0 20px rgba(176, 0, 255, 0.04);
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.stellar-box-header {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--neon-purple);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 0 10px rgba(176, 0, 255, 0.5);
-}
-
-.ancient-knowledge {
-    flex: 1;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.7);
-    overflow-y: auto;
-    margin-bottom: 2rem;
-    padding-right: 1rem;
-}
-
-.ancient-knowledge::-webkit-scrollbar {
-    width: 4px;
-}
-
-.ancient-knowledge::-webkit-scrollbar-thumb {
-    background: rgba(176, 0, 255, 0.5);
-    border-radius: 4px;
-}
-
-/* Action Buttons */
-.revenue-module {
-    display: flex;
-    gap: 1rem;
-    margin-top: auto;
-}
-
-.action-button {
-    flex: 1;
-    padding: 1rem;
-    text-align: center;
-    text-decoration: none;
-    font-weight: 700;
-    border-radius: 8px;
-    letter-spacing: 0.1em;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid;
-}
-
-.btn-whisper {
-    color: #fff;
-    text-shadow: 0 0 5px var(--neon-cyan), 0 0 15px var(--neon-cyan);
-    border-color: rgba(0, 255, 255, 0.8);
-    background: rgba(0, 255, 255, 0.05);
-}
-
-.btn-whisper:hover {
-    background: rgba(0, 255, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-}
-
-.btn-glyph {
-    color: #fff;
-    text-shadow: 0 0 5px #ff00ff, 0 0 15px #ff00ff;
-    border-color: rgba(255, 0, 255, 0.8);
-    background: rgba(255, 0, 255, 0.05);
-}
-
-.btn-glyph:hover {
-    background: rgba(255, 0, 255, 0.2);
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
-}
-
-.price-tag {
-    display: block;
-    font-size: 0.7rem;
-    opacity: 0.9;
-    margin-top: 0.3rem;
-}
-
-/* Footer */
-.footer-text {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100vw;
-    background: #000;
-    padding: 0.4rem 0;
-    text-align: center;
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    color: rgba(255, 255, 255, 0.6);
-    z-index: 100;
-    border-top: 1px solid rgba(0, 255, 255, 0.1);
-}
-
-/* Progress container helper (if used) */
-.progress-container {
-    width: 100%;
-}
-
-/* Header Bar */
+/* --- HEADER BAR --- */
 .top-header-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
     height: 3.5rem;
-    background: #000;
-    z-index: 100;
-    border-bottom: 2px solid rgba(0, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--neon-cyan);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2.5rem;
-}
-
-.header-left-cluster {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-}
-
-.header-logo {
-    height: 1.8rem;
-    width: auto;
-    filter: drop-shadow(0 0 5px var(--neon-cyan));
-    border-radius: 50%;
-    /* Just in case */
+    z-index: 100;
 }
 
 .header-project-name {
     font-weight: bold;
-    font-size: 0.85rem;
     letter-spacing: 0.25em;
-    color: #fff;
-    text-shadow: 0 0 8px var(--neon-cyan);
-}
-
-.header-right-cluster {
-    display: flex;
-    align-items: center;
-}
-
-/* Glyph Museum Grid */
-.glyph-museum {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.glyph-item {
-    aspect-ratio: 1 / 1;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid rgba(176, 0, 255, 0.3);
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.glyph-item:hover {
-    border-color: var(--neon-purple);
-    box-shadow: 0 0 20px rgba(176, 0, 255, 0.4);
-    transform: scale(1.05);
-}
-
-.glyph-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.8) contrast(1.2);
-}
-
-.glyph-item:hover .glyph-img {
-    filter: brightness(1.2) contrast(1.2);
-}
-
-/* ------------------------------------- */
-/* Museum Page Styles                    */
-/* ------------------------------------- */
-.museum-container {
-    width: 100vw;
-    height: 100vh;
-    overflow-y: auto;
-    position: relative;
-    padding: 4rem 8rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.museum-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    z-index: 10;
-    margin-bottom: 4rem;
-}
-
-.museum-header h1 {
-    font-size: 3.5rem;
-    color: var(--neon-cyan);
-    letter-spacing: 0.2em;
-    text-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-    margin-bottom: 0.5rem;
-}
-
-.museum-header p {
-    color: rgba(255, 255, 255, 0.6);
-    letter-spacing: 0.1em;
-}
-
-.back-button {
-    color: var(--neon-purple);
-    border: 1px solid rgba(176, 0, 255, 0.3);
-    padding: 0.8rem 1.5rem;
-    font-size: 0.9rem;
-    background: rgba(176, 0, 255, 0.05);
-    backdrop-filter: blur(8px);
-}
-
-.back-button:hover {
-    background: rgba(176, 0, 255, 0.2);
-    box-shadow: 0 0 20px rgba(176, 0, 255, 0.4);
-}
-
-.artifact-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-    gap: 3rem;
-    z-index: 10;
-    padding-bottom: 5rem;
-}
-
-.artifact-card {
-    background: rgba(5, 5, 10, 0.8);
-    border: 1px solid rgba(0, 255, 255, 0.2);
-    border-radius: 4px;
-    overflow: hidden;
-    backdrop-filter: blur(8px);
-    transition: all 0.4s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.artifact-card.hovered {
-    border-color: var(--neon-cyan);
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
-    transform: translateY(-5px);
-}
-
-.artifact-image-container {
-    width: 100%;
-    aspect-ratio: 1/1;
-    overflow: hidden;
-    position: relative;
-    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
-}
-
-.artifact-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-}
-
-.artifact-card.hovered .artifact-image-container img {
-    transform: scale(1.05);
-}
-
-.sigil-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.8) 100%);
-}
-
-.artifact-info {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.artifact-info h3 {
-    font-size: 1.2rem;
-    color: #fff;
-    margin-bottom: 2rem;
-    letter-spacing: 0.05em;
-    line-height: 1.4;
-}
-
-.artifact-bottom {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.price {
-    font-size: 2rem;
-    color: var(--neon-cyan);
-    font-weight: bold;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-}
-
-.buy-button {
-    background: rgba(0, 255, 255, 0.1);
-    color: var(--neon-cyan);
-    border: 1px solid rgba(0, 255, 255, 0.5);
-    padding: 1rem;
-    text-align: center;
-    text-decoration: none;
-    font-weight: bold;
-    letter-spacing: 0.1em;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-
-.buy-button:hover {
-    background: var(--neon-cyan);
-    color: #000;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
-}
-
-.btn-vault {
-    color: #00ffaa;
-    border-color: rgba(0, 255, 170, 0.5);
-    background: rgba(0, 255, 170, 0.05);
-}
-
-.btn-vault:hover {
-    background: rgba(0, 255, 170, 0.2);
-    box-shadow: 0 0 20px rgba(0, 255, 170, 0.4);
-}
-
-/* ------------------------------------- */
-/* Main Page Living Museum Styles        */
-/* ------------------------------------- */
-.museum-window {
-    transition: all 0.4s ease;
-}
-
-.museum-window:hover {
-    transform: scale(1.05);
-    border-color: var(--neon-purple);
-    box-shadow: 0 0 40px rgba(176, 0, 255, 0.5);
-}
-
-.museum-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    color: var(--neon-cyan);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    letter-spacing: 0.2em;
-    opacity: 0;
-    transition: opacity 0.3s ease;
     text-shadow: 0 0 10px var(--neon-cyan);
+    font-size: 0.9rem;
 }
 
-.museum-window:hover .museum-overlay {
-    opacity: 1;
+/* --- MAIN INTERFACE GRID --- */
+.dashboard {
+    flex: 1;
+    display: flex;
+    gap: 2.5rem;
+    padding: 2rem 3.5rem;
+    height: calc(100vh - 5rem);
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-/* Mobile fallback */
-@media (max-width: 1023px) {
-
-    .hemisphere-left,
-    .hemisphere-right,
-    .mouthpiece-input {
-        backdrop-filter: blur(5px) !important;
-    }
-
-    .vortex-bg-video {
-        opacity: 0.6;
-    }
-
-    .dashboard {
-        flex-direction: column;
-        gap: 1.5rem;
-        padding: 0 1.5rem;
-    }
-
-    .hemisphere-right {
-        width: 100%;
-        max-width: none;
-    }
+/* LEFT SECTOR: NEURAL LINK */
+.hemisphere-left {
+    flex: 2.5;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    border: 1px solid rgba(0, 255, 255, 0.15);
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(5, 5, 16, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.05);
+    min-height: 0;
 }
 
-@media (min-width: 1024px) {
-    .dashboard {
-        flex-direction: row;
-        width: 94vw;
-        padding: 0;
-        gap: 2rem;
-    }
-
-    .hemisphere-right {
-        flex: 0 0 25%;
-        min-width: 300px;
-    }
+.top-inner-row {
+    display: flex;
+    gap: 1.2rem;
+    flex: 2;
+    min-height: 0;
 }
 
-/* Accessibility: reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        transition: none !important;
-        animation: none !important;
-    }
+.visualizer-box {
+    flex: 1;
+    border: 1px solid rgba(0, 255, 255, 0.15);
+    background: #000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.05);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
 
-    .museum-window:hover {
-        transform: none;
-    }
+.revenue-stack {
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 
-    .progress-bar-fill {
-        transition: none;
-    }
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.6) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    text-align: center;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.revenue-stack .action-button {
+    flex: 1;
+}
+
+.btn-whisper {
+    color: var(--neon-cyan);
+    border-color: rgba(0, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.btn-glyph {
+    color: #f0f;
+    border-color: rgba(255, 0, 255, 0.15);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+}
+
+.btn-whisper:hover,
+.btn-glyph:hover {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.8) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 255, 255, 0.3);
+}
+
+/* RIGHT SECTOR: THE LIVING MUSEUM */
+.hemisphere-right {
+    flex: 1.1;
+    border: 1px solid rgba(176, 0, 255, 0.2);
+    background: linear-gradient(135deg, rgba(10, 0, 20, 0.5) 0%, rgba(0, 0, 0, 0.2) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 2.2rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(176, 0, 255, 0.1);
+    min-height: 0;
+}
+
+.stellar-box-header {
+    color: var(--neon-purple);
+    font-weight: bold;
+    font-size: 1.3rem;
+    letter-spacing: 0.3em;
+    text-shadow: 0 0 15px var(--neon-purple);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.artifact-identity {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.artifact-name {
+    font-size: 0.85rem;
+    color: #fff;
+    opacity: 0.9;
+    letter-spacing: 0.1em;
+}
+
+.artifact-price {
+    font-size: 1.8rem;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 12px #0ff;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* SQUARE CAROUSEL LAYOUT */
+.museum-carousel-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    width: 100%;
+    margin-bottom: 2rem;
+    flex: 1;
+    min-height: 0;
+}
+
+.nav-arrow {
+    background: none;
+    border: none;
+    color: var(--neon-purple);
+    font-size: 3.5rem;
+    cursor: pointer;
+    text-shadow: 0 0 15px var(--neon-purple);
+    transition: 0.2s;
+}
+
+.nav-arrow:hover {
+    color: #fff;
+    transform: scale(1.2);
+}
+
+.museum-window {
+    width: 65%;
+    max-width: 350px;
+    aspect-ratio: 1 / 1;
+    /* LOCKS PERFECT SQUARE */
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 255, 255, 0.15), 0 0 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    flex-shrink: 0;
+}
+
+.museum-window img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* CHAT LOG */
+.chat-log {
+    height: 150px;
+    border: 1px solid rgba(0, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.95);
+    padding: 1rem;
+    overflow-y: auto;
+    border-radius: 12px;
+}
+
+.footer-text {
+    height: 1.5rem;
+    background: #000;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.4em;
+    border-top: 1px solid var(--neon-cyan);
 }

@@ -7,11 +7,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <head>
                 <link href="https://fonts.googleapis.com/css2?family=Recursive:wght@300;400;500;700&display=swap" rel="stylesheet" />
             </head>
-            <body>{children}</body>
+            <body suppressHydrationWarning>{children}</body>
         </html>
     );
 }
