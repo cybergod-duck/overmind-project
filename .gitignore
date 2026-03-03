@@ -1,0 +1,32 @@
+# Secrets — NEVER commit
+.env
+.env.*
+auth.json
+master.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs & runtime data
+*.log
+budget_log.json
+groq_models.json
+kernel_conversations.log
+
+# OS junk
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Node
+node_modules/
+.next/
+
+# Archives (keep locally, don't push)
+*_FULL_ARCHIVE_*.md
+
+# Large generated media (optional — remove these lines if you want them in git)
+# generated_media/
+# artifacts/*.png
