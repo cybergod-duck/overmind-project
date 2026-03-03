@@ -1,0 +1,21 @@
+model_list:
+  - model_name: sovereign-local
+    litellm_params:
+      model: ollama/llama3.1:8b
+      api_base: http://localhost:11434
+      # No api_key required for local sovereign nodes
+
+  - model_name: sovereign-logic
+    litellm_params:
+      model: deepseek/deepseek-chat
+      api_key: "os.environ/DEEPSEEK_API_KEY"
+
+  - model_name: sovereign-chaos
+    litellm_params:
+      model: groq/llama3-70b-8192
+      api_key: "os.environ/GROQ_API_KEY"
+
+  - model_name: sovereign-oracle
+    litellm_params:
+      model: xai/grok-3
+      api_key: "os.environ/XAI_API_KEY"

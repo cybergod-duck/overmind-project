@@ -1,0 +1,45 @@
+model_list:
+  # The Sovereign
+  - model_name: "grok-3"
+    litellm_params:
+      model: "xai/grok-3"
+      api_key: "os.environ/XAI_API_KEY"
+
+  # The Elder
+  - model_name: "llama3-instant"
+    litellm_params:
+      model: "groq/llama-3.1-8b-instant"
+      api_key: "os.environ/GROQ_API_KEY"
+
+  # The Architect
+  - model_name: "openrouter-qwen"
+    litellm_params:
+      model: "openrouter/qwen/qwen3-32b"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+
+  # Perplexity API
+  - model_name: "sonar"
+    litellm_params:
+      model: "perplexity/sonar-small-chat"
+      api_key: "os.environ/PERPLEXITY_API_KEY"
+
+  # Local Model (Ollama)
+  - model_name: "local-ollama"
+    litellm_params:
+      model: "ollama/llama3"
+      api_base: "http://localhost:11434"
+
+  # Cheap/Fast Alternatives
+  - model_name: "deepseek-chat"
+    litellm_params:
+      model: "deepseek/deepseek-chat"
+      api_key: "os.environ/DEEPSEEK_API_KEY"
+      
+  - model_name: "together-mixtral"
+    litellm_params:
+      model: "together_ai/mistralai/Mixtral-8x7B-Instruct-v0.1"
+      api_key: "os.environ/TOGETHER_API_KEY"
+
+litellm_settings:
+  drop_params: true
+  set_verbose: false
