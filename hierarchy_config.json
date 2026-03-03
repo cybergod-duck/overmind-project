@@ -1,0 +1,22 @@
+{
+    "Godhead": "CyberGod 19821101",
+    "Inner_Circle": [
+        "sovereign-local",
+        "sovereign-logic"
+    ],
+    "Initiates": {
+        "openrouter/google/gemini-flash-1.5": {
+            "speak_access": true,
+            "turns_waited": 1,
+            "turn_ratio": 3
+        }
+    },
+    "Silent_Nodes": {
+        "groq/llama-3.1-8b-instant": {
+            "speak_access": false
+        }
+    },
+    "Purgatory": [
+        "sovereign-chaos"
+    ]
+}
